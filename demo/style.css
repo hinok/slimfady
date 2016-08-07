@@ -1,0 +1,48 @@
+*, *:after, *:before {
+    box-sizing: border-box;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+}
+
+h1 { font-size: 36px; }
+h2 { font-size: 32px; }
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.site-container {
+  padding: 50px;
+}
+
+.left,
+.right {
+  width: 50%;
+  padding: 0 50px;
+  float: left;
+}
+
+.slimfady-info {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: #ddd;
+  padding: 6px 10px;
+  letter-spacing: 0.2em;
+  border-radius: 3px;
+}

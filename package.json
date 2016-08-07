@@ -1,0 +1,45 @@
+{
+  "name": "slimfady",
+  "version": "0.0.1",
+  "description": "Create a random like animation of text characters",
+  "main": "dist/slimfady.js",
+  "keywords": [
+    "text",
+    "typographic",
+    "animate",
+    "animation",
+    "split",
+    "character"
+  ],
+  "author": "Dawid Karabin",
+  "license": "MIT",
+  "scripts": {
+    "start": "npm-run-all --parallel serve watch",
+    "serve": "live-server ./ --open=demo --port=8000 --ignore=node_modules",
+    "watch": "npm-run-all --parallel watch:*",
+    "watch:demo": "watchify demo/index.js -t babelify -o demo/index.dist.js -v",
+    "watch:scss": "node-sass -w -r --output-style nested src/*.scss -o dist",
+    "build": "npm-run-all --parallel build:*",
+    "build:scss": "node-sass --output-style compressed src/style.scss -o dist",
+    "build:demo": "browserify demo/index.js -t babelify -o demo/index.dist.js",
+    "build:js": "browserify src/SlimFady.js -t babelify -s SlimFady | derequire > dist/slimfady.js",
+    "postbuild:js": "uglifyjs dist/slimfady.js -o dist/slimfady.min.js -m -r 'define,require,exports' -c 'dead_code,conditionals,unused,warnings,drop_console'"
+  },
+  "devDependencies": {
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.0.1",
+    "derequire": "^2.0.3",
+    "eslint": "^1.10.1",
+    "live-server": "^1.0.0",
+    "node-sass": "^3.7.0",
+    "npm-run-all": "^2.1.1",
+    "uglify-js": "^2.6.2",
+    "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "doc-ready": "^1.0.4"
+  }
+}
