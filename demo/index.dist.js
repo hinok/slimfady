@@ -12,6 +12,24 @@ var _SlimFady2 = _interopRequireDefault(_SlimFady);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _docReady2.default)(function () {
+  var sf = new _SlimFady2.default({
+    container: '.js-demo-controls',
+    delay: 80
+  });
+  var start = document.querySelector('.js-start');
+  var stop = document.querySelector('.js-stop');
+  var clear = document.querySelector('.js-clear');
+
+  start.addEventListener('click', function () {
+    return sf.startAnimation();
+  });
+  stop.addEventListener('click', function () {
+    return sf.stopAnimation();
+  });
+  clear.addEventListener('click', function () {
+    return sf.clearAnimation();
+  });
+
   var sf1 = new _SlimFady2.default({
     container: '.js-demo-1'
   });
@@ -20,11 +38,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     container: '.js-demo-2'
   });
 
-  sf1.animate();
-  sf2.animate();
+  sf1.startAnimation();
+  sf2.startAnimation();
 });
 
-},{"../src/SlimFady":4,"doc-ready":2}],2:[function(require,module,exports){
+},{"../src/SlimFady":5,"doc-ready":2}],2:[function(require,module,exports){
 /*!
  * docReady v1.0.4
  * Cross browser DOMContentLoaded event emitter
@@ -106,7 +124,174 @@ if ( typeof define === 'function' && define.amd ) {
 
 })( window );
 
-},{"eventie":3}],3:[function(require,module,exports){
+},{"eventie":4}],3:[function(require,module,exports){
+/**
+ * Module export
+ *
+ * @param {Element} el
+ * @return {ClassList}
+ */
+
+module.exports = function (el) {
+  return new ClassList(el);
+};
+
+/**
+ * Initialize a new ClassList for the given element
+ *
+ * @param {Element} el DOM Element
+ */
+function ClassList(el) {
+  if (!el || el.nodeType !== 1) {
+    throw new Error('A DOM Element reference is required');
+  }
+
+  this.el = el;
+  this.classList = el.classList;
+}
+
+/**
+ * Check token validity
+ *
+ * @param token
+ * @param [method]
+ */
+function checkToken(token, method) {
+  method = method || 'a method';
+
+  if (typeof token != 'string') {
+    throw new TypeError(
+      'Failed to execute \'' + method + '\' on \'ClassList\': ' +
+      'the token provided (\'' + token + '\') is not a string.'
+    );
+  }
+  if (token === "") {
+    throw new SyntaxError(
+      'Failed to execute \'' + method + '\' on \'ClassList\': ' +
+      'the token provided must not be empty.'
+    );
+  }
+  if (/\s/.test(token)) {
+    throw new Error(
+      'Failed to execute \'' + method + '\' on \'ClassList\': ' +
+      'the token provided (\'' + token + '\') contains HTML space ' +
+      'characters, which are not valid in tokens.'
+    );
+  }
+}
+
+/**
+ * Return an array of the class names on the element.
+ *
+ * @return {Array}
+ */
+ClassList.prototype.toArray = function () {
+  var str = (this.el.getAttribute('class') || '').replace(/^\s+|\s+$/g, '');
+  var classes = str.split(/\s+/);
+  if ('' === classes[0]) { classes.shift(); }
+  return classes;
+};
+
+/**
+ * Add the given `token` to the class list if it's not already present.
+ *
+ * @param {String} token
+ */
+ClassList.prototype.add = function (token) {
+  var classes, index, updated;
+  checkToken(token, 'add');
+
+  if (this.classList) {
+    this.classList.add(token);
+  }
+  else {
+    // fallback
+    classes = this.toArray();
+    index = classes.indexOf(token);
+    if (index === -1) {
+      classes.push(token);
+      this.el.setAttribute('class', classes.join(' '));
+    }
+  }
+
+  return;
+};
+
+/**
+ * Check if the given `token` is in the class list.
+ *
+ * @param {String} token
+ * @return {Boolean}
+ */
+ClassList.prototype.contains = function (token) {
+  checkToken(token, 'contains');
+
+  return this.classList ?
+    this.classList.contains(token) :
+    this.toArray().indexOf(token) > -1;
+};
+
+/**
+ * Remove any class names that match the given `token`, when present.
+ *
+ * @param {String|RegExp} token
+ */
+ClassList.prototype.remove = function (token) {
+  var arr, classes, i, index, len;
+
+  if ('[object RegExp]' == Object.prototype.toString.call(token)) {
+    arr = this.toArray();
+    for (i = 0, len = arr.length; i < len; i++) {
+      if (token.test(arr[i])) {
+        this.remove(arr[i]);
+      }
+    }
+  }
+  else {
+    checkToken(token, 'remove');
+
+    if (this.classList) {
+      this.classList.remove(token);
+    }
+    else {
+      // fallback
+      classes = this.toArray();
+      index = classes.indexOf(token);
+      if (index > -1) {
+        classes.splice(index, 1);
+        this.el.setAttribute('class', classes.join(' '));
+      }
+    }
+  }
+
+  return;
+};
+
+/**
+ * Toggle the `token` in the class list. Optionally force state via `force`.
+ *
+ * Native `classList` is not used as some browsers that support `classList` do
+ * not support `force`. Avoiding `classList` altogether keeps this function
+ * simple.
+ *
+ * @param {String} token
+ * @param {Boolean} [force]
+ * @return {Boolean}
+ */
+ClassList.prototype.toggle = function (token, force) {
+  checkToken(token, 'toggle');
+
+  var hasToken = this.contains(token);
+  var method = hasToken ? (force !== true && 'remove') : (force !== false && 'add');
+
+  if (method) {
+    this[method](token);
+  }
+
+  return (typeof force == 'boolean' ? force : !hasToken);
+};
+
+},{}],4:[function(require,module,exports){
 /*!
  * eventie v1.0.6
  * event binding helper
@@ -190,7 +375,7 @@ if ( typeof define === 'function' && define.amd ) {
 
 })( window );
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -203,16 +388,23 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _domClasslist = require('dom-classlist');
+
+var _domClasslist2 = _interopRequireDefault(_domClasslist);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 exports.default = function (options) {
+  var CONTAINER_CLASS_NAME = 'sf-container';
   var BASE_CLASS_NAME = 'sf-blink';
   var ANIM_CLASS_NAME = 'sf-an-blink';
   var excludedChars = ['', ' ', '\n', '\r', '\t'];
-  var intervalDelay = 20;
+  var intervalDelay = void 0;
   var intervalId = void 0;
   var containerEl = void 0;
-  var isAnimating = void 0;
+  var isPaused = void 0;
 
   var SlimFady = function () {
     function SlimFady(options) {
@@ -225,37 +417,77 @@ exports.default = function (options) {
       if (containerEl === null) {
         throw new Error('Could not find a DOM element by using selector: ' + options.container);
       }
+      (0, _domClasslist2.default)(containerEl).remove(CONTAINER_CLASS_NAME);
+
+      intervalDelay = this.options.delay || 20;
 
       wrap(containerEl);
     }
 
     _createClass(SlimFady, [{
-      key: 'animate',
-      value: function animate() {
-        if (isAnimating === true) {
+      key: 'startAnimation',
+      value: function startAnimation() {
+        if (this.isAnimating()) {
           return;
         }
 
-        isAnimating = true;
+        var selector = '.' + BASE_CLASS_NAME;
 
-        var elements = Array.prototype.slice.call(containerEl.querySelectorAll('.' + BASE_CLASS_NAME));
-        if (elements.length === 0) {
-          return;
+        if (isPaused === true) {
+          selector += ':not(.' + ANIM_CLASS_NAME + ')';
         }
 
-        intervalId = setInterval(function () {
-          var len = elements.length;
+        isPaused = false;
 
-          if (len === 0) {
-            clearInterval(intervalId);
-            isAnimating = false;
-            return;
+        var elements = containerEl.querySelectorAll(selector);
+        animateElements.call(this, elements);
+      }
+    }, {
+      key: 'stopAnimation',
+      value: function stopAnimation() {
+        if (this.isAnimating()) {
+          isPaused = true;
+        }
+
+        clearInterval(intervalId);
+        intervalId = undefined;
+      }
+    }, {
+      key: 'clearAnimation',
+      value: function clearAnimation() {
+        this.stopAnimation();
+        isPaused = false;
+
+        var elements = containerEl.querySelectorAll('.' + ANIM_CLASS_NAME);
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = elements[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var el = _step.value;
+
+            (0, _domClasslist2.default)(el).remove(ANIM_CLASS_NAME);
           }
-
-          var index = randomIntFromRange(0, len - 1);
-          animateElement(elements[index]);
-          elements.splice(index, 1);
-        }, intervalDelay);
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+    }, {
+      key: 'isAnimating',
+      value: function isAnimating() {
+        return intervalId !== undefined;
       }
     }]);
 
@@ -263,12 +495,40 @@ exports.default = function (options) {
   }();
 
   /**
-   * @param {HTMLElement} el
+   * @param {Array.<HTMLElement>|NodeList.<HTMLElement>}
    */
 
 
+  function animateElements(elements) {
+    var _this = this;
+
+    if (elements.length === 0) {
+      return;
+    }
+
+    if ('splice' in elements === false) {
+      elements = Array.from(elements);
+    }
+
+    intervalId = setInterval(function () {
+      var len = elements.length;
+
+      if (len === 0) {
+        _this.stopAnimation();
+        return;
+      }
+
+      var index = randomIntFromRange(0, len - 1);
+      animateElement(elements[index]);
+      elements.splice(index, 1);
+    }, intervalDelay);
+  }
+
+  /**
+   * @param {HTMLElement} el
+   */
   function animateElement(el) {
-    el.className = ' ' + ANIM_CLASS_NAME;
+    (0, _domClasslist2.default)(el).add(ANIM_CLASS_NAME);
   }
 
   /**
@@ -294,6 +554,10 @@ exports.default = function (options) {
     if (!hasDefinedOption(options, 'container')) {
       throw new Error('Please set container option as a string and valid selector, got ' + _typeof(options.container));
     }
+
+    if (options.delay !== undefined && typeof options.delay !== 'number') {
+      throw new Error('Please set delay option as a number, got ' + _typeof(options.delay));
+    }
   }
 
   /**
@@ -310,13 +574,13 @@ exports.default = function (options) {
       }
     });
 
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-      for (var _iterator = textNodesToWrap[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var node = _step.value;
+      for (var _iterator2 = textNodesToWrap[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var node = _step2.value;
 
         var textLength = node.textContent.length;
         var nodeToSplit = node;
@@ -342,16 +606,16 @@ exports.default = function (options) {
         }
       }
     } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
         }
       } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
+        if (_didIteratorError2) {
+          throw _iteratorError2;
         }
       }
     }
@@ -396,4 +660,4 @@ exports.default = function (options) {
 
 module.exports = exports['default'];
 
-},{}]},{},[1]);
+},{"dom-classlist":3}]},{},[1]);

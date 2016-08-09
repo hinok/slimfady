@@ -17,7 +17,7 @@
     "start": "npm-run-all --parallel serve watch",
     "serve": "live-server ./ --open=demo --port=8000 --ignore=node_modules",
     "watch": "npm-run-all --parallel watch:*",
-    "watch:demo": "watchify demo/index.js -t babelify -o demo/index.dist.js -v",
+    "watch:demo": "watchify demo/index.js -t babelify -o demo/index.dist.js -v -d",
     "watch:scss": "node-sass -w -r --output-style nested src/*.scss -o dist",
     "build": "npm-run-all --parallel build:*",
     "build:scss": "node-sass --output-style compressed src/style.scss -o dist",
@@ -40,6 +40,7 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
-    "doc-ready": "^1.0.4"
+    "doc-ready": "^1.0.4",
+    "dom-classlist": "^1.0.1"
   }
 }

@@ -1,4 +1,7 @@
+import classList from 'dom-classlist';
+
 export default (options) => {
+  const CONTAINER_CLASS_NAME = 'sf-container';
   const BASE_CLASS_NAME = 'sf-blink';
   const ANIM_CLASS_NAME = 'sf-an-blink';
   const excludedChars = [
@@ -8,10 +11,10 @@ export default (options) => {
     '\r',
     '\t'
   ];
-  let intervalDelay = 20;
+  let intervalDelay;
   let intervalId;
   let containerEl;
-  let isAnimating;
+  let isPaused;
 
   class SlimFady {
     constructor(options) {
@@ -22,43 +25,85 @@ export default (options) => {
       if (containerEl === null) {
         throw new Error(`Could not find a DOM element by using selector: ${options.container}`);
       }
+      classList(containerEl).remove(CONTAINER_CLASS_NAME);
+
+      intervalDelay = this.options.delay || 20;
 
       wrap(containerEl);
     }
 
-    animate() {
-      if (isAnimating === true) {
+    startAnimation() {
+      if (this.isAnimating()) {
         return;
       }
 
-      isAnimating = true;
+      let selector = `.${BASE_CLASS_NAME}`;
 
-      let elements = Array.prototype.slice.call(containerEl.querySelectorAll('.' + BASE_CLASS_NAME));
-      if (elements.length === 0) {
-        return;
+      if (isPaused === true) {
+        selector += `:not(.${ANIM_CLASS_NAME})`;
       }
 
-      intervalId = setInterval(() => {
-        const len = elements.length;
+      isPaused = false;
 
-        if (len === 0) {
-          clearInterval(intervalId);
-          isAnimating = false;
-          return;
-        }
-
-        const index = randomIntFromRange(0, len - 1);
-        animateElement(elements[index]);
-        elements.splice(index, 1);
-      }, intervalDelay);
+      const elements = containerEl.querySelectorAll(selector);
+      this::animateElements(elements);
     }
+
+    stopAnimation() {
+      if (this.isAnimating()) {
+        isPaused = true;
+      }
+
+      clearInterval(intervalId);
+      intervalId = undefined;
+    }
+
+    clearAnimation() {
+      this.stopAnimation();
+      isPaused = false;
+
+      const elements = containerEl.querySelectorAll(`.${ANIM_CLASS_NAME}`);
+      for (let el of elements) {
+        classList(el).remove(ANIM_CLASS_NAME);
+      }
+    }
+
+    isAnimating() {
+      return intervalId !== undefined;
+    }
+  }
+
+  /**
+   * @param {Array.<HTMLElement>|NodeList.<HTMLElement>}
+   */
+  function animateElements(elements) {
+    if (elements.length === 0) {
+      return;
+    }
+
+    if ('splice' in elements === false) {
+        elements = Array.from(elements);
+    }
+
+    intervalId = setInterval(() => {
+      const len = elements.length;
+
+      if (len === 0) {
+        this.stopAnimation();
+        return;
+      }
+
+      const index = randomIntFromRange(0, len - 1);
+      animateElement(elements[index]);
+      elements.splice(index, 1);
+    }, intervalDelay);
   }
 
   /**
    * @param {HTMLElement} el
    */
   function animateElement(el) {
-    el.className = ' ' + ANIM_CLASS_NAME;
+    classList(el).add(ANIM_CLASS_NAME);
   }
 
   /**
@@ -83,6 +128,10 @@ export default (options) => {
   function checkOptions(options) {
     if (!hasDefinedOption(options, 'container')) {
       throw new Error(`Please set container option as a string and valid selector, got ${typeof options.container}`);
+    }
+
+    if (options.delay !== undefined && typeof options.delay !== 'number') {
+      throw new Error(`Please set delay option as a number, got ${typeof options.delay}`);
     }
   }
 
