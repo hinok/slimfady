@@ -23,7 +23,8 @@
     "build:scss": "node-sass --output-style compressed src/style.scss -o dist",
     "build:demo": "browserify demo/index.js -t babelify -o demo/index.dist.js",
     "build:js": "browserify src/SlimFady.js -t babelify -s SlimFady | derequire > dist/slimfady.js",
-    "postbuild:js": "uglifyjs dist/slimfady.js -o dist/slimfady.min.js -m -r 'define,require,exports' -c 'dead_code,conditionals,unused,warnings,drop_console'"
+    "postbuild:js": "uglifyjs dist/slimfady.js -o dist/slimfady.min.js -m -r 'define,require,exports' -c 'dead_code,conditionals,unused,warnings,drop_console'",
+    "test": "make test"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
