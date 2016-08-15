@@ -74,7 +74,7 @@ export default (options) => {
   }
 
   /**
-   * @param {Array.<HTMLElement>|NodeList.<HTMLElement>}
+   * @param {Array.<HTMLElement>|NodeList.<HTMLElement>} elements
    */
   function animateElements(elements) {
     if (elements.length === 0) {
