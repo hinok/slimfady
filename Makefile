@@ -1,5 +1,5 @@
 test:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
+	./node_modules/.bin/mocha \
 		src/**/*Spec.js \
 		--require babel-register \
 		--reporter spec \
@@ -15,4 +15,4 @@ test-watch:
 		--harmony \
 		--bail \
 
-.PHONY: test-watch
+.PHONY: test test-watch

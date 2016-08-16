@@ -24,16 +24,20 @@
     "build:demo": "browserify demo/index.js -t babelify -o demo/index.dist.js",
     "build:js": "browserify src/SlimFady.js -t babelify -s SlimFady | derequire > dist/slimfady.js",
     "postbuild:js": "uglifyjs dist/slimfady.js -o dist/slimfady.min.js -m -r 'define,require,exports' -c 'dead_code,conditionals,unused,warnings,drop_console'",
-    "test": "make test"
+    "test": "NODE_ENV=test nyc make test",
+    "test:coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test:report": "nyc report --reporter=lcov"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-istanbul": "^2.0.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.11.6",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
     "chai": "^3.5.0",
+    "coveralls": "^2.11.12",
     "derequire": "^2.0.3",
     "eslint": "^1.10.1",
     "jsdomify": "^2.1.0",
@@ -41,6 +45,7 @@
     "mocha": "^3.0.2",
     "node-sass": "^3.7.0",
     "npm-run-all": "^2.1.1",
+    "nyc": "^8.1.0",
     "sinon": "^1.17.5",
     "uglify-js": "^2.6.2",
     "watchify": "^3.7.0"
@@ -48,5 +53,18 @@
   "dependencies": {
     "doc-ready": "^1.0.4",
     "dom-classlist": "^1.0.1"
+  },
+  "nyc": {
+    "include": [
+      "src/*.js"
+    ],
+    "exclude": [
+      "src/*Spec.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false
   }
 }

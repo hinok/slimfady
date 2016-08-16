@@ -1,4 +1,7 @@
 [![Build Status](https://travis-ci.org/hinok/slimfady.svg?branch=master)](https://travis-ci.org/hinok/slimfady)
+[![Coverage Status](https://coveralls.io/repos/github/hinok/slimfady/badge.svg?branch=master)](https://coveralls.io/github/hinok/slimfady?branch=master)
+[![npm version](https://badge.fury.io/js/slimfady.svg)](https://badge.fury.io/js/slimfady)
+[![GitHub version](https://badge.fury.io/gh/hinok%2Fslimfady.svg)](https://badge.fury.io/gh/hinok%2Fslimfady)
 
 # SlimFady
 Randomly delay revealing of each character in a text (uses CSS3 animation).
@@ -18,7 +21,7 @@ npm install slimfady --save
 
 ### JS
 
-```
+```javascript
 import SlimFady from 'slimfady';
 
 const options = {
@@ -31,7 +34,7 @@ const sf = new SlimFady(options);
 
 ### CSS
 
-```
+```css
 // CSS
 <link rel="stylesheet" href="node_modules/slimfady/dist/style.css">
 
@@ -41,7 +44,7 @@ const sf = new SlimFady(options);
 
 ### DOM
 
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>  
