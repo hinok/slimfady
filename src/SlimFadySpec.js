@@ -21,6 +21,18 @@ describe('SlimFady', () => {
     </html>
   `;
 
+  const domAdvanced = `
+    <!DOCTYPE html>
+    <html>
+      <head></head>
+      <body>
+        <div id="test" class="${CONTAINER_CLASS_NAME}">
+          <strong>h</strong><div>e</div><a href="#">llo</a>
+        </div>
+      </body>
+    </html>
+  `;
+
   const options = {
     container: '#test'
   };
@@ -96,6 +108,16 @@ describe('SlimFady', () => {
       const wrapped = Array.from(getWrappedElements());
       const attrs = wrapped.filter((el) => el.hasAttribute('aria-hidden') && el.getAttribute('aria-hidden') === 'true');
       expect(attrs.length).to.equal(5);
+    });
+
+    it('should preserve and does NOT remove html tags', () => {
+      jsdomify.destroy();
+      jsdomify.create(domAdvanced);
+      const sf = new SlimFady(options);
+      expect(getWrappedElements().length).to.equal(5);
+      expect(document.querySelectorAll('#test strong').length).to.equal(1);
+      expect(document.querySelectorAll('#test div').length).to.equal(1);
+      expect(document.querySelectorAll('#test a').length).to.equal(1);
     });
 
     it('should append aria-label attribute to the container element', () => {
