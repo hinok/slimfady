@@ -1,6 +1,6 @@
 {
   "name": "slimfady",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Create a random like animation of text characters",
   "main": "dist/slimfady.js",
   "keywords": [

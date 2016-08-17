@@ -285,7 +285,8 @@ exports.default = function (options) {
   }();
 
   /**
-   * @param {Array.<HTMLElement>|NodeList.<HTMLElement>}
+   * @param {Array.<HTMLElement>|NodeList.<HTMLElement>} elements
+   * @this SlimFady
    */
 
 
@@ -296,7 +297,7 @@ exports.default = function (options) {
       return;
     }
 
-    if ('splice' in elements === false) {
+    if (!Array.isArray(elements)) {
       elements = Array.from(elements);
     }
 
@@ -305,6 +306,7 @@ exports.default = function (options) {
 
       if (len === 0) {
         _this.stopAnimation();
+        isPaused = false;
         return;
       }
 
@@ -329,19 +331,10 @@ exports.default = function (options) {
   }
 
   /**
-   * @param {Object} options
-   * @param {string} option
-   * @returns {boolean}
-   */
-  function hasDefinedOption(options, option) {
-    return options[option] !== undefined;
-  }
-
-  /**
    * @throws {Error}
    */
   function checkOptions(options) {
-    if (!hasDefinedOption(options, 'container')) {
+    if (typeof options.container !== 'string') {
       throw new Error('Please set container option as a string and valid selector, got ' + _typeof(options.container));
     }
 
