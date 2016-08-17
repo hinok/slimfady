@@ -39,6 +39,8 @@
     "chai": "^3.5.0",
     "coveralls": "^2.11.12",
     "derequire": "^2.0.3",
+    "doc-ready": "^1.0.4",
+    "dom-classlist": "^1.0.1",
     "eslint": "^1.10.1",
     "jsdomify": "^2.1.0",
     "live-server": "^1.0.0",
@@ -51,8 +53,6 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
-    "doc-ready": "^1.0.4",
-    "dom-classlist": "^1.0.1"
   },
   "nyc": {
     "include": [

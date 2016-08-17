@@ -75,13 +75,14 @@ export default (options) => {
 
   /**
    * @param {Array.<HTMLElement>|NodeList.<HTMLElement>} elements
+   * @this SlimFady
    */
   function animateElements(elements) {
     if (elements.length === 0) {
       return;
     }
 
-    if ('splice' in elements === false) {
+    if (!Array.isArray(elements)) {
         elements = Array.from(elements);
     }
 
@@ -90,6 +91,7 @@ export default (options) => {
 
       if (len === 0) {
         this.stopAnimation();
+        isPaused = false;
         return;
       }
 
@@ -114,19 +116,10 @@ export default (options) => {
   }
 
   /**
-   * @param {Object} options
-   * @param {string} option
-   * @returns {boolean}
-   */
-  function hasDefinedOption(options, option) {
-    return options[option] !== undefined;
-  }
-
-  /**
    * @throws {Error}
    */
   function checkOptions(options) {
-    if (!hasDefinedOption(options, 'container')) {
+    if (typeof options.container !== 'string') {
       throw new Error(`Please set container option as a string and valid selector, got ${typeof options.container}`);
     }
 
