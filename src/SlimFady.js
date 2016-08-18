@@ -62,10 +62,10 @@ export default (options) => {
       this.stopAnimation();
       isPaused = false;
 
-      const elements = containerEl.querySelectorAll(`.${ANIM_CLASS_NAME}`);
-      for (let el of elements) {
+      const elements = toArray(containerEl.querySelectorAll(`.${ANIM_CLASS_NAME}`));
+      elements.forEach((el) => {
         classList(el).remove(ANIM_CLASS_NAME);
-      }
+      });
     }
 
     isAnimating() {
@@ -83,7 +83,7 @@ export default (options) => {
     }
 
     if (!Array.isArray(elements)) {
-        elements = Array.from(elements);
+        elements = toArray(elements);
     }
 
     intervalId = setInterval(() => {
@@ -142,9 +142,9 @@ export default (options) => {
       }
     });
 
-    for (let node of textNodesToWrap) {
-      const textLength = node.textContent.length;
+    textNodesToWrap.forEach((node) => {
       let nodeToSplit = node;
+      const textLength = node.textContent.length;
 
       for (let i = 0; i < textLength; i++) {
         // if nodeToSplit is "Abcde" , then
@@ -165,7 +165,7 @@ export default (options) => {
 
         nodeToSplit = siblingNode;
       }
-    }
+    });
 
     el.setAttribute('aria-label', el.textContent);
   }
@@ -193,6 +193,14 @@ export default (options) => {
     wrapper.className = BASE_CLASS_NAME;
     wrapper.setAttribute('aria-hidden', 'true');
     return wrapper;
+  }
+
+  /**
+   * @param {HTMLCollection|NodeList} list
+   * @returns {Array}
+   */
+  function toArray(list) {
+    return Array.prototype.slice.call(list);
   }
 
   /**

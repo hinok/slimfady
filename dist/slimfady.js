@@ -248,31 +248,10 @@ exports.default = function (options) {
         this.stopAnimation();
         isPaused = false;
 
-        var elements = containerEl.querySelectorAll('.' + ANIM_CLASS_NAME);
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = elements[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var el = _step.value;
-
-            (0, _domClasslist2.default)(el).remove(ANIM_CLASS_NAME);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
+        var elements = toArray(containerEl.querySelectorAll('.' + ANIM_CLASS_NAME));
+        elements.forEach(function (el) {
+          (0, _domClasslist2.default)(el).remove(ANIM_CLASS_NAME);
+        });
       }
     }, {
       key: 'isAnimating',
@@ -298,7 +277,7 @@ exports.default = function (options) {
     }
 
     if (!Array.isArray(elements)) {
-      elements = Array.from(elements);
+      elements = toArray(elements);
     }
 
     intervalId = setInterval(function () {
@@ -357,51 +336,30 @@ exports.default = function (options) {
       }
     });
 
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
+    textNodesToWrap.forEach(function (node) {
+      var nodeToSplit = node;
+      var textLength = node.textContent.length;
 
-    try {
-      for (var _iterator2 = textNodesToWrap[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var node = _step2.value;
+      for (var i = 0; i < textLength; i++) {
+        // if nodeToSplit is "Abcde" , then
+        // nodeToSplit = "A"
+        // siblingNode = "bcde"
+        // @see https://developer.mozilla.org/en-US/docs/Web/API/Text/splitText
+        var siblingNode = nodeToSplit.splitText(1);
 
-        var textLength = node.textContent.length;
-        var nodeToSplit = node;
-
-        for (var i = 0; i < textLength; i++) {
-          // if nodeToSplit is "Abcde" , then
-          // nodeToSplit = "A"
-          // siblingNode = "bcde"
-          // @see https://developer.mozilla.org/en-US/docs/Web/API/Text/splitText
-          var siblingNode = nodeToSplit.splitText(1);
-
-          if (isExludedChar(nodeToSplit.textContent)) {
-            nodeToSplit = siblingNode;
-            continue;
-          }
-
-          var wrapper = createWrapperNode();
-
-          wrapper.appendChild(nodeToSplit.cloneNode(false));
-          nodeToSplit.parentNode.replaceChild(wrapper, nodeToSplit);
-
+        if (isExludedChar(nodeToSplit.textContent)) {
           nodeToSplit = siblingNode;
+          continue;
         }
+
+        var wrapper = createWrapperNode();
+
+        wrapper.appendChild(nodeToSplit.cloneNode(false));
+        nodeToSplit.parentNode.replaceChild(wrapper, nodeToSplit);
+
+        nodeToSplit = siblingNode;
       }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
+    });
 
     el.setAttribute('aria-label', el.textContent);
   }
@@ -429,6 +387,14 @@ exports.default = function (options) {
     wrapper.className = BASE_CLASS_NAME;
     wrapper.setAttribute('aria-hidden', 'true');
     return wrapper;
+  }
+
+  /**
+   * @param {HTMLCollection|NodeList} list
+   * @returns {Array}
+   */
+  function toArray(list) {
+    return Array.prototype.slice.call(list);
   }
 
   /**
